@@ -4,6 +4,7 @@ tell application fullPathSafari to activate
 delay 2
 tell application "System Events"
     tell application process "Safari Technology Preview"
+        key code 53
         keystroke "," using command down
         set frontmost to true
         tell window 1
