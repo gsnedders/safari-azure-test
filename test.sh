@@ -2,7 +2,7 @@
 
 set -x
 
-log stream --info --debug --predicate '(subsystem == "com.apple.TCC")'
+log stream --info --debug --predicate '(subsystem == "com.apple.TCC")' &
 
 cat ~/Library/WebDriver/com.apple.SafariTechnologyPreview.plist
 HOMEBREW_NO_AUTO_UPDATE=1 brew cask install safari-technology-preview.rb
