@@ -7,15 +7,16 @@ jobs:
   pool:
     vmImage: 'macOS-10.14'
   steps:
-  - displayName: plist-before
-    script: |
+  - script: |
          cat ~/Library/WebDriver/com.apple.SafariTechnologyPreview.plist
-  - displayName: install safari-preview
-    script: |
+    displayName: plist-before
+  - script: |
          HOMEBREW_NO_AUTO_UPDATE=1 brew cask install safari-technology-preview.rb
          chmod +x allowremote
          ./allowremote
          sudo "/Applications/Safari Technology Preview.app/Contents/MacOS/safaridriver" --enable
-  - displayName: plist-after
-    script: |
+    displayName: install safari-preview
+  - script: |
          cat ~/Library/WebDriver/com.apple.SafariTechnologyPreview12.plist
+    displayName: plist-after
+    
