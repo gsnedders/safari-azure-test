@@ -2,16 +2,16 @@ trigger:
 - master
 
 jobs:
-- job: test
-  displayName: 'test'
+- job: Mojave
+  displayName: 'Mojave'
   pool:
     vmImage: 'macOS-10.14'
   steps:
   - script: ./test.sh
     displayName: test script
 
-- job: test
-  displayName: 'test'
+- job: Catalina
+  displayName: 'Catalina'
   pool:
     vmImage: 'macOS-10.15'
   steps:
