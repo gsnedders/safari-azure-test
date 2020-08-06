@@ -1,5 +1,7 @@
 trigger:
 - master
+
+jobs:
 - job: affected_without_changes_safari_preview
   displayName: 'affected tests without changes: Safari Technology Preview'
   condition: eq(variables['Build.Reason'], 'PullRequest')
