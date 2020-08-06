@@ -2,21 +2,19 @@ trigger:
 - master
 
 jobs:
-- job: affected_without_changes_safari_preview
-  displayName: 'affected tests without changes: Safari Technology Preview'
+- job: test
+  displayName: 'test'
   pool:
     vmImage: 'macOS-10.14'
   steps:
-  - script: |
-         cat ~/Library/WebDriver/com.apple.SafariTechnologyPreview.plist
-    displayName: plist-before
-  - script: |
-         HOMEBREW_NO_AUTO_UPDATE=1 brew cask install safari-technology-preview.rb
-         chmod +x allowremote
-         ./allowremote
-         sudo "/Applications/Safari Technology Preview.app/Contents/MacOS/safaridriver" --enable
-    displayName: install safari-preview
-  - script: |
-         cat ~/Library/WebDriver/com.apple.SafariTechnologyPreview12.plist
-    displayName: plist-after
+  - script: ./test.sh
+    displayName: test script
+
+- job: test
+  displayName: 'test'
+  pool:
+    vmImage: 'macOS-10.15'
+  steps:
+  - script: ./test.sh
+    displayName: test script
     
