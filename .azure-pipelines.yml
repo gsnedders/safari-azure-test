@@ -2,19 +2,19 @@ trigger:
 - master
 
 jobs:
-- job: Mojave
-  displayName: 'Mojave'
+- job: Monterey
+  displayName: 'Monterey'
   pool:
-    vmImage: 'macOS-10.14'
+    vmImage: 'macOS-12'
   steps:
   - script: ./test.sh
     displayName: test script
-
-- job: Catalina
-  displayName: 'Catalina'
-  pool:
-    vmImage: 'macOS-10.15'
-  steps:
-  - script: ./test.sh
-    displayName: test script
-    
+  - script: |
+      mkdir -p /Users/runner/sysdiagnose
+      sudo sysdiagnose -ub -f /Users/runner/sysdiagnose -A sysdiagnose_$(System.JobPositionInPhase)
+    displayName: 'Collect sysdiagnose'
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish sysdiagnose'
+    inputs:
+      pathtoPublish: /Users/runner/sysdiagnose/
+      artifactName: sysdiagnose
