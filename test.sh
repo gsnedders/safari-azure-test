@@ -13,3 +13,5 @@ sudo /Applications/Safari\ Technology\ Preview.app/Contents/MacOS/safaridriver -
 
 ls -lR ~/Library/WebDriver
 plutil -p ~/Library/WebDriver/com.apple.SafariTechnologyPreview.plist
+
+pkill log

@@ -225,4 +225,6 @@ def download(dest=None, channel="preview", rename=None, system_version=None):
 
 
 if __name__ == "__main__":
+    logging.basicConfig()
+    logger.setLevel(logging.DEBUG)
     print(download(rename="STP"))
