@@ -2,6 +2,7 @@
 
 set -x
 
+sudo log config --mode "level:debug,persist:debug"
 log stream --info --debug --predicate '(subsystem == "com.apple.TCC")' &
 
 ls -lR ~/Library/WebDriver
