@@ -2,10 +2,18 @@ trigger:
 - master
 
 jobs:
-- job: Ventura
-  displayName: 'Ventura'
+- job: macOS
+  strategy:
+    matrix:
+      Sonoma:
+        vmImage: 'macOS-14'
+      Sequoia:
+        vmImage: 'macOS-15'
+      Tahoe:
+        vmImage: 'macOS-26'
+  displayName: 'macOS'
   pool:
-    vmImage: 'macOS-13'
+    vmImage: $(vmImage)
   steps:
   - script: ./test.sh
     displayName: test script
