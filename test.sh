@@ -27,6 +27,21 @@ launchctl print "gui/$(id -u)" || true
 security authorize com.apple.safaridriver.allow
 echo "non-interactive authorize exit: $?"
 
+security list-keychains -d user
+sleep 5
+
+# Deliberately not `security unlock-keychain`: that would force it open and mask
+# the actual question, whether the login keychain is already unlocked in this
+# ambient session.
+security add-generic-password -a "test-$$" -s com.apple.safaridriver.test -w "test-value" -U ~/Library/Keychains/login.keychain-db
+sleep 5
+
+security find-generic-password -a "test-$$" -s com.apple.safaridriver.test -w ~/Library/Keychains/login.keychain-db
+sleep 5
+
+security delete-generic-password -a "test-$$" -s com.apple.safaridriver.test ~/Library/Keychains/login.keychain-db
+sleep 5
+
 ls -lR ~/Library/WebDriver
 sleep 5
 
