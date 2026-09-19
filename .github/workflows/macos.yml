@@ -1,0 +1,31 @@
+name: macOS
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  macOS:
+    strategy:
+      matrix:
+        include:
+          - legName: Tahoe
+            os: macos-26
+    name: ${{ matrix.legName }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: test script
+        run: ./test.sh
+      - name: Collect logs
+        run: |
+          mkdir -p "$RUNNER_TEMP/logs"
+          sudo log collect --start "$(cat "$HOME/test-start-time")" --output "$RUNNER_TEMP/logs/system_logs_${{ matrix.legName }}.logarchive"
+          sudo tar -czf "$RUNNER_TEMP/logs/system_logs_${{ matrix.legName }}.logarchive.tar.gz" -C "$RUNNER_TEMP/logs" "system_logs_${{ matrix.legName }}.logarchive"
+          sudo rm -rf "$RUNNER_TEMP/logs/system_logs_${{ matrix.legName }}.logarchive"
+      - name: Publish logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-${{ matrix.legName }}
+          path: ${{ runner.temp }}/logs/

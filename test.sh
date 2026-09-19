@@ -2,7 +2,7 @@
 
 set -x
 
-date '+%Y-%m-%d %H:%M:%S' > /Users/runner/test-start-time
+date '+%Y-%m-%d %H:%M:%S' > "$HOME/test-start-time"
 
 DEBUG_SUBSYSTEMS=(
   com.apple.Authorization
@@ -106,7 +106,7 @@ try_webdriver_session() {
   local status
   status=$(curl -s -o "/tmp/session-$label.json" -w '%{http_code}' -X POST "http://localhost:$port/session" \
     -H 'Content-Type: application/json' \
-    -d '{"capabilities":{"alwaysMatch":{"browserName":"safari"}}}')
+    -d '{"capabilities":{}}')
   echo "$label session create HTTP status: $status"
   cat "/tmp/session-$label.json"
   sleep 5

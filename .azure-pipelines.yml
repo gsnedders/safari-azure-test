@@ -15,11 +15,13 @@ jobs:
   - script: ./test.sh
     displayName: test script
   - script: |
-      mkdir -p /Users/runner/logs
-      sudo log collect --start "$(cat /Users/runner/test-start-time)" --output /Users/runner/logs/system_logs_$(legName).logarchive
+      mkdir -p "$(Agent.TempDirectory)/logs"
+      sudo log collect --start "$(cat "$HOME/test-start-time")" --output "$(Agent.TempDirectory)/logs/system_logs_$(legName).logarchive"
+      sudo tar -czf "$(Agent.TempDirectory)/logs/system_logs_$(legName).logarchive.tar.gz" -C "$(Agent.TempDirectory)/logs" "system_logs_$(legName).logarchive"
+      sudo rm -rf "$(Agent.TempDirectory)/logs/system_logs_$(legName).logarchive"
     displayName: 'Collect logs'
   - task: PublishBuildArtifacts@1
     displayName: 'Publish logs'
     inputs:
-      pathtoPublish: /Users/runner/logs/
+      pathtoPublish: $(Agent.TempDirectory)/logs
       artifactName: logs
