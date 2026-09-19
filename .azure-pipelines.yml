@@ -5,12 +5,9 @@ jobs:
 - job: macOS
   strategy:
     matrix:
-      Sonoma:
-        vmImage: 'macOS-14'
-      Sequoia:
-        vmImage: 'macOS-15'
       Tahoe:
         vmImage: 'macOS-26'
+        legName: 'Tahoe'
   displayName: 'macOS'
   pool:
     vmImage: $(vmImage)
@@ -18,11 +15,11 @@ jobs:
   - script: ./test.sh
     displayName: test script
   - script: |
-      mkdir -p /Users/runner/sysdiagnose
-      sudo sysdiagnose -ub -f /Users/runner/sysdiagnose -A sysdiagnose_$(System.JobPositionInPhase)
-    displayName: 'Collect sysdiagnose'
+      mkdir -p /Users/runner/logs
+      sudo log collect --start "$(cat /Users/runner/test-start-time)" --output /Users/runner/logs/system_logs_$(legName).logarchive
+    displayName: 'Collect logs'
   - task: PublishBuildArtifacts@1
-    displayName: 'Publish sysdiagnose'
+    displayName: 'Publish logs'
     inputs:
-      pathtoPublish: /Users/runner/sysdiagnose/
-      artifactName: sysdiagnose
+      pathtoPublish: /Users/runner/logs/
+      artifactName: logs

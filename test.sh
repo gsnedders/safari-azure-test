@@ -2,6 +2,8 @@
 
 set -x
 
+date '+%Y-%m-%d %H:%M:%S' > /Users/runner/test-start-time
+
 id
 dseditgroup -o checkmember -m "$(whoami)" _webdeveloper || true
 dseditgroup -o checkmember -m "$(whoami)" admin || true
@@ -10,8 +12,13 @@ launchctl print "gui/$(id -u)" || true
 security authorize com.apple.safaridriver.allow
 echo "non-interactive authorize exit: $?"
 
-sudo log config --mode "level:debug,persist:debug"
-log stream --info --debug --predicate '(subsystem == "com.apple.TCC")' &
+sudo log config --mode level:debug,persist:debug --subsystem com.apple.Authorization
+sudo log config --mode level:debug,persist:debug --subsystem com.apple.WebDriver
+sudo log config --mode level:debug,persist:debug --subsystem com.apple.WebDriver.HTTPService
+sudo log config --mode level:debug,persist:debug --subsystem com.apple.TCC
+sudo log config --mode level:debug,persist:debug --subsystem com.apple.sandbox
+sudo log config --mode level:debug,persist:debug --subsystem com.apple.SafariShared
+sudo log config --mode level:debug,persist:debug --subsystem com.apple.SafariTechnologyPreview
 
 ls -lR ~/Library/WebDriver
 sleep 5
