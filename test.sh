@@ -2,6 +2,14 @@
 
 set -x
 
+id
+dseditgroup -o checkmember -m "$(whoami)" _webdeveloper || true
+dseditgroup -o checkmember -m "$(whoami)" admin || true
+sudo launchctl procinfo $$ || true
+launchctl print "gui/$(id -u)" || true
+security authorize com.apple.safaridriver.allow
+echo "non-interactive authorize exit: $?"
+
 sudo log config --mode "level:debug,persist:debug"
 log stream --info --debug --predicate '(subsystem == "com.apple.TCC")' &
 
@@ -26,6 +34,8 @@ sleep 5
 plutil -p ~/Library/WebDriver/com.apple.SafariTechnologyPreview.plist
 sleep 5
 
+python3 -m venv /tmp/venv
+source /tmp/venv/bin/activate
 python3 -m pip install html5lib packaging requests
 python3 download.py
 sudo installer -pkg STP.pkg -target LocalSystem
