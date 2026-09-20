@@ -20,8 +20,8 @@ jobs:
       sudo tar -czf "$(Agent.TempDirectory)/logs/system_logs_$(legName).logarchive.tar.gz" -C "$(Agent.TempDirectory)/logs" "system_logs_$(legName).logarchive"
       sudo rm -rf "$(Agent.TempDirectory)/logs/system_logs_$(legName).logarchive"
     displayName: 'Collect logs'
-  - task: PublishBuildArtifacts@1
+  - task: PublishPipelineArtifact@1
     displayName: 'Publish logs'
     inputs:
-      pathtoPublish: $(Agent.TempDirectory)/logs
+      targetPath: $(Agent.TempDirectory)/logs
       artifactName: logs
