@@ -13,6 +13,9 @@ DEBUG_SUBSYSTEMS=(
   com.apple.SafariShared
   com.apple.SafariTechnologyPreview
   com.apple.WebInspector
+  com.apple.SkyLight
+  com.apple.AppKit
+  com.apple.webinspectord
 )
 
 for subsystem in "${DEBUG_SUBSYSTEMS[@]}"; do
