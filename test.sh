@@ -31,6 +31,7 @@ security authorize com.apple.safaridriver.allow
 echo "non-interactive authorize exit: $?"
 
 security list-keychains -d user
+security show-keychain-info ~/Library/Keychains/login.keychain-db || true
 sleep 5
 
 # Deliberately not `security unlock-keychain`: that would force it open and mask
@@ -129,6 +130,11 @@ try_webdriver_session() {
 
 try_webdriver_session /usr/bin/safaridriver 4444 safari
 try_webdriver_session "/Applications/Safari Technology Preview.app/Contents/MacOS/safaridriver" 4445 stp
+
+# authd's view of the session owner and the safaridriver right for this run.
+/usr/bin/log show --start "$(cat "$HOME/test-start-time")" --info --debug \
+  --predicate 'process == "authd"' 2>&1 \
+  | grep -E 'session owner|safaridriver|-60007|does (NOT )?satisfy' || true
 
 for subsystem in "${DEBUG_SUBSYSTEMS[@]}"; do
   sudo log config --reset --subsystem "$subsystem"

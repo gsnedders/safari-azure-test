@@ -21,7 +21,7 @@ echo "owning launchd job: $label (pid $pid)"
 domain="gui/$(id -u)"
 launchctl print "$domain/$label" 2>&1 | grep -E '^\s*(path|state|pid|program|type) ' | sed 's/^/  /'
 
-path="$(launchctl print "$domain/$label" 2>/dev/null | awk -F' = ' '/^\s*path =/ { print $2; exit }')"
+path="$(launchctl print "$domain/$label" 2>/dev/null | sed -n 's/^[[:space:]]*path = //p' | head -1)"
 if [ -n "$path" ] && [ -f "$path" ]; then
   if value="$(plutil -extract SessionCreate raw -o - "$path" 2>/dev/null)"; then
     echo "  SessionCreate in $path: $value"

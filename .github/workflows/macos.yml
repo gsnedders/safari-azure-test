@@ -4,20 +4,37 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   macOS:
     strategy:
+      fail-fast: false
       matrix:
         include:
+          # GitHub-hosted: default session, no SessionCreate.
           - legName: Tahoe
-            os: macos-26
+            runs-on: '["macos-26"]'
+          # Self-hosted VMs (see sessioncreate-test/README.md): sc-true is a
+          # stock `svc.sh install` (SessionCreate=true); sc-false has the key
+          # removed from its plist.
+          - legName: sc-true
+            runs-on: '["self-hosted", "sc-true"]'
+          - legName: sc-false
+            runs-on: '["self-hosted", "sc-false"]'
     name: ${{ matrix.legName }}
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ fromJSON(matrix.runs-on) }}
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
+      - name: Owning launchd job and its SessionCreate setting
+        run: |
+          mkdir -p "$RUNNER_TEMP/logs"
+          bash sessioncreate-test/find-service.sh 2>&1 | tee "$RUNNER_TEMP/logs/service.txt"
       - name: test script
-        run: ./test.sh
+        run: ./test.sh 2>&1 | tee "$RUNNER_TEMP/logs/test-output.txt"
       - name: Collect logs
         run: |
           mkdir -p "$RUNNER_TEMP/logs"
@@ -26,6 +43,7 @@ jobs:
           sudo rm -rf "$RUNNER_TEMP/logs/system_logs_${{ matrix.legName }}.logarchive"
       - name: Publish logs
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: logs-${{ matrix.legName }}
           path: ${{ runner.temp }}/logs/
