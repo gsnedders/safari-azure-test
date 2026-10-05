@@ -1,0 +1,51 @@
+name: SessionCreate experiment
+
+# Runs sessioncreate-test/sc-test.sh inside a job on:
+#   - a self-hosted runner installed stock (SessionCreate=true), label sc-true
+#   - a self-hosted runner with the SessionCreate key removed, label sc-false
+#   - a GitHub-hosted macos-26 runner, for comparison
+# See sessioncreate-test/README.md for the runner setup.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  experiment:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - leg: sc-true
+            runs-on: '["self-hosted", "sc-true"]'
+          - leg: sc-false
+            runs-on: '["self-hosted", "sc-false"]'
+          - leg: hosted
+            runs-on: '["macos-26"]'
+    name: ${{ matrix.leg }}
+    runs-on: ${{ fromJSON(matrix.runs-on) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Owning launchd job and its SessionCreate setting
+        run: bash sessioncreate-test/find-service.sh 2>&1 | tee "$RUNNER_TEMP/service.txt"
+
+      - name: sc-test
+        run: |
+          start="$(date '+%Y-%m-%d %H:%M:%S')"
+          bash sessioncreate-test/sc-test.sh 2>&1 | tee "$RUNNER_TEMP/out.txt"
+          {
+            echo
+            echo "===== authd (since $start) ====="
+            /usr/bin/log show --start "$start" --info --debug \
+              --predicate 'process == "authd"' 2>&1 \
+              | grep -E 'session owner|safaridriver|-60007|does (NOT )?satisfy' \
+              || echo "(nothing matched; log show may need sudo)"
+          } 2>&1 | tee -a "$RUNNER_TEMP/out.txt"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sc-${{ matrix.leg }}
+          path: |
+            ${{ runner.temp }}/service.txt
+            ${{ runner.temp }}/out.txt
