@@ -7,6 +7,12 @@ name: SessionCreate experiment
 # See sessioncreate-test/README.md for the runner setup.
 
 on:
+  push:
+    branches:
+      - master
+    paths:
+      - sessioncreate-test/**
+      - .github/workflows/sessioncreate.yml
   workflow_dispatch:
 
 jobs:
